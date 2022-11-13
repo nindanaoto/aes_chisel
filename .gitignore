@@ -343,3 +343,7 @@ synthesis/
 
 # scratch
 test_data.txt
+
+*.v
+*.fir
+*.json
