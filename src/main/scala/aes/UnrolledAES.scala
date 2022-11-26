@@ -127,11 +127,11 @@ class UnrolledAES(Nk: Int, SubBytes_SCD: Boolean, InvSubBytes_SCD: Boolean) exte
 
 class UnrolledCipher(Nk: Int, SubBytes_SCD: Boolean, InvSubBytes_SCD: Boolean) extends Module {
   val io = IO(new Bundle {
-    val input_text = Input(Vec(Params.StateLength, UInt(8.W))) // plaintext or ciphertext
+    val input_text = Input(UInt((Params.StateLength*8).W)) // plaintext
     //
-    val key = Input(Vec(Nk, Vec(Params.StateLength, UInt(8.W)))) // key
+    val key = Input(UInt(((Nk*Params.StateLength*8).W))) // key
     //
-    val output_text = Output(Vec(Params.StateLength, UInt(8.W))) // ciphertext or plaintext
+    val output_text = Output(UInt((Params.StateLength*8).W)) // ciphertext
   })
   val AES = Module(new UnrolledAES(Nk,SubBytes_SCD,InvSubBytes_SCD))
   AES.io.AES_mode := 2.U
@@ -143,11 +143,11 @@ class UnrolledCipher(Nk: Int, SubBytes_SCD: Boolean, InvSubBytes_SCD: Boolean) e
 
 class UnrolledInvCipher(Nk: Int, SubBytes_SCD: Boolean, InvSubBytes_SCD: Boolean) extends Module {
   val io = IO(new Bundle {
-    val input_text = Input(Vec(Params.StateLength, UInt(8.W))) // plaintext or ciphertext
+    val input_text = Input(UInt((Params.StateLength*8).W)) // ciphertext
     //
-    val key = Input(Vec(Nk, Vec(Params.StateLength, UInt(8.W)))) // key
+    val key = Input(UInt(((Nk*Params.StateLength*8).W))) // key
     //
-    val output_text = Output(Vec(Params.StateLength, UInt(8.W))) // ciphertext or plaintext
+    val output_text = Output(UInt((Params.StateLength*8).W)) // plaintext
   })
   val AES = Module(new UnrolledAES(Nk,SubBytes_SCD,InvSubBytes_SCD))
   AES.io.AES_mode := 3.U
@@ -162,4 +162,8 @@ object UnrolledAESTop extends App {
 
 object UnrolledCipherTop extends App {
   (new chisel3.stage.ChiselStage).emitVerilog(new UnrolledCipher(4,false,false))
+}
+
+object UnrolledInvCipherTop extends App {
+  (new chisel3.stage.ChiselStage).emitVerilog(new UnrolledInvCipher(4,false,false))
 }
